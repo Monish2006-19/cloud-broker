@@ -1,0 +1,63 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production
+
+# Build outputs
+/backend/dist
+/frontend/build
+/frontend/.pnp
+.pnp.js
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Testing
+/coverage
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Uploads directory - all contents except .gitkeep
+backend/uploads/*
+!backend/uploads/.gitkeep
+!backend/uploads/temp/
+backend/uploads/temp/*
+!backend/uploads/temp/.gitkeep
+
+# Generated files
+backend/generated/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Azure
+*.msi
+azure-debug.log
+
+# Archives
+*.tar.gz
+*.zip
+!sample-apps/**/*.zip
+!test-websites/**/*.zip

@@ -1,0 +1,50 @@
+{
+  "name": "cloud-broker-backend",
+  "version": "1.0.0",
+  "description": "Automated Cloud Brokerage System Backend - Code-to-Container Pipeline",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest"
+  },
+  "keywords": [
+    "azure",
+    "docker",
+    "containerization",
+    "kubernetes",
+    "cloud"
+  ],
+  "author": "Cloud Broker Team",
+  "license": "MIT",
+  "dependencies": {
+    "@azure/arm-appcontainers": "^2.2.0",
+    "@azure/arm-appservice": "^17.0.0",
+    "@azure/arm-containerinstance": "^9.1.0",
+    "@azure/arm-containerregistry": "^10.1.0",
+    "@azure/arm-resources": "^5.2.0",
+    "@azure/container-registry": "^1.1.0",
+    "@azure/identity": "^3.2.4",
+    "@azure/monitor-query": "^1.1.0",
+    "@azure/storage-blob": "^12.15.0",
+    "adm-zip": "^0.5.10",
+    "archiver": "^5.3.1",
+    "axios": "^1.4.0",
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-fileupload": "^1.4.0",
+    "fs-extra": "^11.1.1",
+    "js-yaml": "^4.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "path": "^0.12.7",
+    "tar": "^6.2.1",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.3.1",
+    "jest": "^29.6.1",
+    "nodemon": "^3.0.1"
+  }
+}

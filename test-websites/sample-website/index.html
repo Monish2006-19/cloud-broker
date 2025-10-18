@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio - Cloud Broker Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            padding: 50px 0;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin: 20px 0;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .content {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .tech-tag {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .deployment-info {
+            background: #e8f5e8;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .deployment-info h3 {
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+
+        .url-display {
+            background: #f1f3f4;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.9em;
+            word-break: break-all;
+            margin: 10px 0;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 30px 0;
+            opacity: 0.8;
+        }
+
+        .demo-section {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .demo-section h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Cloud Broker Demo</h1>
+            <p>Automatic Code Deployment to Azure Container Apps</p>
+            <div class="status-badge">✅ Successfully Deployed!</div>
+        </div>
+
+        <div class="content">
+            <div class="demo-section">
+                <h3>🎓 Faculty Demonstration</h3>
+                <p><strong>This website was automatically deployed using the Cloud Broker system!</strong></p>
+                <p>Upload → Process → Deploy → Public URL Generation - All automated!</p>
+            </div>
+
+            <h2>About This Demo</h2>
+            <p>This is a sample static website demonstrating the Cloud Broker's ability to:</p>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>📁 File Upload</h3>
+                    <p>Users can upload ZIP files containing their website or application code through a simple web interface.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>🔍 Code Analysis</h3>
+                    <p>Automatically detects the technology stack (HTML, Node.js, Python, etc.) and generates appropriate Dockerfile.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>☁️ Azure Deployment</h3>
+                    <p>Deploys to Azure Container Apps with real resources in your Azure subscription.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>🌐 Public URLs</h3>
+                    <p>Generates secure HTTPS public URLs that anyone can visit to see your deployed application.</p>
+                </div>
+            </div>
+
+            <div class="deployment-info">
+                <h3>📊 Deployment Information</h3>
+                <p><strong>Deployed on:</strong> <span id="current-date"></span></p>
+                <p><strong>Technology:</strong> Static HTML/CSS/JavaScript</p>
+                <p><strong>Azure Service:</strong> Container Apps</p>
+                <p><strong>Region:</strong> Southeast Asia</p>
+                
+                <h4>Current URL:</h4>
+                <div class="url-display" id="current-url">
+                    Loading current URL...
+                </div>
+            </div>
+
+            <h3>🛠️ Technology Stack</h3>
+            <div class="tech-stack">
+                <span class="tech-tag">Azure Container Apps</span>
+                <span class="tech-tag">Docker</span>
+                <span class="tech-tag">Node.js Backend</span>
+                <span class="tech-tag">React Frontend</span>
+                <span class="tech-tag">Azure CLI</span>
+                <span class="tech-tag">Express.js</span>
+            </div>
+
+            <h3>✨ Features Demonstrated</h3>
+            <ul style="margin: 20px 0; padding-left: 20px;">
+                <li>Responsive web design</li>
+                <li>Real Azure cloud deployment</li>
+                <li>Automatic SSL/HTTPS certificates</li>
+                <li>Public internet accessibility</li>
+                <li>Professional-grade hosting</li>
+                <li>Resource monitoring and management</li>
+            </ul>
+
+            <div style="background: #f0f8ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                <h3 style="color: #0066cc;">🎯 Faculty Validation</h3>
+                <p><strong>This demonstrates:</strong></p>
+                <ul style="margin-top: 10px;">
+                    <li>Real cloud deployment capability</li>
+                    <li>Professional web hosting</li>
+                    <li>Automated DevOps pipeline</li>
+                    <li>Live, accessible public URLs</li>
+                    <li>Azure cloud integration</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🎓 VIT Student Project - Cloud Broker System</p>
+            <p>Demonstrating automated code deployment to Azure Cloud</p>
+        </div>
+    </div>
+
+    <script>
+        // Display current date
+        document.getElementById('current-date').textContent = new Date().toLocaleString();
+        
+        // Display current URL
+        document.getElementById('current-url').textContent = window.location.href;
+        
+        // Add some interactivity
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.background = '#e3f2fd';
+                setTimeout(() => {
+                    this.style.background = '#f8f9fa';
+                }, 1000);
+            });
+        });
+
+        // Display deployment timestamp
+        console.log('🚀 Cloud Broker Demo - Deployed successfully!');
+        console.log('⏰ Deployment time:', new Date().toISOString());
+        console.log('🌐 Current URL:', window.location.href);
+    </script>
+</body>
+</html>
