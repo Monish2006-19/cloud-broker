@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Student Management Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Pacifico&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',sans-serif;background:#f2f2f7;min-height:100vh}
+.container{display:flex;max-width:1100px;margin:32px auto;border-radius:18px;overflow:hidden;box-shadow:0 10px 35px rgba(0,0,0,0.15)}
+.left{flex:1 1 40%;background:#111;color:#fff;padding:48px}
+.right{flex:1 1 60%;background:linear-gradient(135deg,#a674ff,#7f5cff);color:#fff;padding:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.left h1{font-family:'Pacifico',cursive;color:#9c6bff;margin-bottom:18px}
+.left p{color:#ccc;margin-bottom:22px}
+input{width:100%;background:transparent;border:none;border-bottom:2px solid #555;color:#fff;padding:10px 6px;margin:12px 0;outline:none}
+input:focus{border-color:#9c6bff}
+.alert{display:none;background:#ffdddd;color:#900;padding:10px;border-radius:6px;margin-bottom:16px}
+button{background:#9c6bff;color:#fff;border:none;padding:12px;border-radius:8px;cursor:pointer;margin-top:10px;font-weight:600}
+button:hover{transform:scale(1.03)}
+.view-btn{background:#6b9cff}
+.records-box{margin-top:14px;background:rgba(255,255,255,0.08);padding:12px;border-radius:10px;max-height:260px;overflow:auto;width:100%}
+.record-item{background:rgba(255,255,255,0.06);padding:8px;border-radius:6px;margin-bottom:8px}
+.image-box{width:80%;background:rgba(255,255,255,0.15);padding:12px;border-radius:12px}
+.image-box img{width:100%;border-radius:8px}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="left">
+    <h1>Student Record</h1>
+    <p>Enter student details to save to cloud storage</p>
+
+    <div id="alert" class="alert">⚠ Please fill all required fields!</div>
+
+    <input id="roll" placeholder="Roll Number">
+    <input id="name" placeholder="Student Name">
+    <input id="marks" placeholder="Marks">
+    <input id="attendance" placeholder="Attendance (%)">
+
+    <button id="submitBtn">Submit</button>
+    <button id="viewBtn" class="view-btn">View Records</button>
+
+    <div id="records" class="records-box" style="display:none">
+      <h3 style="margin:0 0 8px 0">Student Records</h3>
+      <div id="list"></div>
+    </div>
+  </div>
+
+  <div class="right">
+    <h2>Welcome to<br>Student Management Dashboard</h2>
+    <p>Create and view your student records in the cloud</p>
+    <div class="image-box">
+      <img src="illustration.png" alt="Dashboard Illustration">
+    </div>
+  </div>
+</div>
+
+<script>
+// IMPORTANT: Update this URL after deploying Cloud Broker backend to Azure
+// For now, this connects to your local backend (you'll need to deploy the backend too)
+const API_BASE = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000/api/students'
+  : 'http://localhost:5000/api/students'; // CHANGE THIS to your deployed backend URL
+
+document.getElementById('submitBtn').addEventListener('click', async () => {
+  const roll = document.getElementById('roll').value.trim();
+  const name = document.getElementById('name').value.trim();
+  const marks = document.getElementById('marks').value.trim();
+  const attendance = document.getElementById('attendance').value.trim();
+  const alertBox = document.getElementById('alert');
+
+  if (!roll || !name || !marks || !attendance) {
+    alertBox.style.display = 'block';
+    return;
+  }
+  alertBox.style.display = 'none';
+
+  const payload = { roll, name, marks, attendance, timestamp: new Date().toISOString() };
+
+  try {
+    const res = await fetch(API_BASE + '/store', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message || json.error || 'Failed to store');
+    alert('✅ Record saved successfully! ' + (json.message || ''));
+    document.getElementById('roll').value = '';
+    document.getElementById('name').value = '';
+    document.getElementById('marks').value = '';
+    document.getElementById('attendance').value = '';
+  } catch (err) {
+    console.error(err);
+    alert('❌ Error storing record: ' + err.message);
+  }
+});
+
+document.getElementById('viewBtn').addEventListener('click', async () => {
+  const recordsBox = document.getElementById('records');
+  const list = document.getElementById('list');
+  list.innerHTML = 'Loading...';
+  recordsBox.style.display = 'block';
+
+  try {
+    const res = await fetch(API_BASE + '/list');
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message || json.error || 'Failed to list');
+    
+    const records = json.data || json;
+    
+    if (!Array.isArray(records) || records.length === 0) {
+      list.innerHTML = '<div style="color:#ddd">No records found</div>';
+      return;
+    }
+    list.innerHTML = '';
+    records.forEach(r => {
+      const div = document.createElement('div');
+      div.className = 'record-item';
+      div.innerText = `${r.roll} — ${r.name} | Marks: ${r.marks}, Attendance: ${r.attendance}%`;
+      list.appendChild(div);
+    });
+  } catch (err) {
+    console.error(err);
+    list.innerHTML = '<div style="color:#fbb">Error loading records: ' + err.message + '</div>';
+  }
+});
+</script>
+
+</body>
+</html>

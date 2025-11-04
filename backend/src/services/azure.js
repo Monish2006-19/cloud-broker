@@ -1247,12 +1247,14 @@ __pycache__
 
   getOptimizedImage(runtime) {
     const images = {
+      'node': 'node:18-alpine',
       'nodejs': 'node:18-alpine',
       'python': 'python:3.9-slim',
       'static': 'nginx:alpine',
       'html': 'nginx:alpine',
       'php': 'php:8.1-apache',
-      'java': 'openjdk:11-jre-slim'
+      'java': 'openjdk:11-jre-slim',
+      'dotnet': 'mcr.microsoft.com/dotnet/aspnet:6.0'
     };
     
     return images[runtime] || 'nginx:alpine';

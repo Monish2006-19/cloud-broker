@@ -95,6 +95,7 @@ try {
   app.use('/api/upload', require('./routes/upload'));
   app.use('/api/deployment', require('./routes/deployment'));
   app.use('/api/azure', require('./routes/azure'));
+  app.use('/api/students', require('./routes/students'));
   console.log('✅ All route handlers loaded successfully');
 } catch (error) {
   console.error('❌ Error loading route handlers:', error.message);
@@ -121,7 +122,13 @@ app.get('/', (req, res) => {
       status: 'GET /api/deployment/:projectId/status - Get deployment status',
       metrics: 'GET /api/deployment/:projectId/metrics - Get deployment metrics',
       delete: 'DELETE /api/deployment/:projectId - Delete deployment',
-      azure: 'GET /api/azure/status - Azure service status'
+      azure: 'GET /api/azure/status - Azure service status',
+      students: {
+        store: 'POST /api/students/store - Store student record',
+        list: 'GET /api/students/list - List all student records',
+        delete: 'DELETE /api/students/:recordId - Delete a student record',
+        status: 'GET /api/students/status - Get storage status'
+      }
     },
     documentation: 'Visit the frontend at http://localhost:3000 for the web interface'
   });

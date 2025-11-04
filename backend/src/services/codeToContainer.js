@@ -101,7 +101,12 @@ class CodeToContainerService {
   async detectRuntime(projectPath) {
     const files = await this.getProjectFiles(projectPath);
     
-    for (const [runtimeName, config] of Object.entries(this.supportedRuntimes)) {
+    // Priority order: Check for specific runtime markers first (package.json, requirements.txt, etc.)
+    // before generic markers (HTML files)
+    const priorityOrder = ['node', 'python', 'dotnet', 'java', 'static'];
+    
+    for (const runtimeName of priorityOrder) {
+      const config = this.supportedRuntimes[runtimeName];
       for (const file of config.files) {
         if (files.some(f => f.includes(file))) {
           return {
@@ -113,7 +118,7 @@ class CodeToContainerService {
       }
     }
     
-    throw new Error('Unsupported runtime detected. Supported: Node.js, Python, .NET, Java');
+    throw new Error('Unsupported runtime detected. Supported: Node.js, Python, .NET, Java, Static HTML');
   }
 
   async getProjectFiles(projectPath) {
@@ -268,6 +273,7 @@ LABEL runtime="static-nginx"
     const packageJsonPath = path.join(projectPath, 'package.json');
     let nodeVersion = '18';
     let startScript = 'npm start';
+    let appPort = 3000;
     
     if (await fs.pathExists(packageJsonPath)) {
       const packageJson = await fs.readJson(packageJsonPath);
@@ -279,14 +285,15 @@ LABEL runtime="static-nginx"
       }
       
       // Determine start command
-      if (packageJson.scripts) {
-        if (packageJson.scripts.start) {
-          startScript = 'npm start';
-        } else if (packageJson.main) {
-          startScript = `node ${packageJson.main}`;
-        }
+      if (packageJson.scripts && packageJson.scripts.start) {
+        startScript = 'npm start';
+      } else if (packageJson.main) {
+        startScript = `node ${packageJson.main}`;
       }
     }
+    
+    // Detect port from server files
+    appPort = await this.detectNodePort(projectPath);
 
     return `# Multi-stage build for Node.js application
 FROM node:${nodeVersion}-alpine AS builder
@@ -297,7 +304,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm ci --only=production || npm install --production
 
 # Production stage
 FROM node:${nodeVersion}-alpine AS production
@@ -319,14 +326,10 @@ RUN chown -R nodeuser:nodejs /app
 USER nodeuser
 
 # Expose port
-EXPOSE 3000
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \\
-  CMD node healthcheck.js || exit 1
+EXPOSE ${appPort}
 
 # Start application
-CMD ["${startScript.replace('npm ', '')}"]`;
+CMD ${startScript === 'npm start' ? '["npm", "start"]' : JSON.stringify(startScript.split(' '))}`;
   }
 
   async generatePythonDockerfile(projectPath) {

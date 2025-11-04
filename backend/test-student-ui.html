@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student API Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    button.view {
+      background: #2196F3;
+    }
+    button.view:hover {
+      background: #0b7dda;
+    }
+    #records {
+      margin-top: 30px;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 5px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .record-item {
+      background: white;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border-left: 4px solid #4CAF50;
+    }
+    .success {
+      background: #d4edda;
+      color: #155724;
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 15px;
+      display: none;
+    }
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 15px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📚 Student Record Management</h1>
+    
+    <div class="form-group">
+      <label>Roll Number:</label>
+      <input type="text" id="roll" placeholder="Enter roll number">
+    </div>
+    
+    <div class="form-group">
+      <label>Student Name:</label>
+      <input type="text" id="name" placeholder="Enter student name">
+    </div>
+    
+    <div class="form-group">
+      <label>Marks:</label>
+      <input type="number" id="marks" placeholder="Enter marks">
+    </div>
+    
+    <div class="form-group">
+      <label>Attendance (%):</label>
+      <input type="number" id="attendance" placeholder="Enter attendance percentage">
+    </div>
+    
+    <button onclick="submitRecord()">Submit Record</button>
+    <button class="view" onclick="viewRecords()">View All Records</button>
+    
+    <div id="success" class="success"></div>
+    <div id="error" class="error"></div>
+    
+    <div id="records" style="display:none;">
+      <h3>📋 Student Records</h3>
+      <div id="recordsList"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:5000/api/students';
+
+    async function submitRecord() {
+      const roll = document.getElementById('roll').value.trim();
+      const name = document.getElementById('name').value.trim();
+      const marks = document.getElementById('marks').value.trim();
+      const attendance = document.getElementById('attendance').value.trim();
+      
+      const successDiv = document.getElementById('success');
+      const errorDiv = document.getElementById('error');
+      successDiv.style.display = 'none';
+      errorDiv.style.display = 'none';
+
+      if (!roll || !name || !marks || !attendance) {
+        errorDiv.textContent = '⚠️ Please fill all fields!';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      try {
+        const response = await fetch(API_BASE + '/store', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ roll, name, marks, attendance })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || data.error || 'Failed to store record');
+        }
+
+        successDiv.textContent = '✅ Record saved successfully!';
+        successDiv.style.display = 'block';
+
+        // Clear form
+        document.getElementById('roll').value = '';
+        document.getElementById('name').value = '';
+        document.getElementById('marks').value = '';
+        document.getElementById('attendance').value = '';
+
+      } catch (error) {
+        errorDiv.textContent = '❌ Error: ' + error.message;
+        errorDiv.style.display = 'block';
+      }
+    }
+
+    async function viewRecords() {
+      const recordsDiv = document.getElementById('records');
+      const listDiv = document.getElementById('recordsList');
+      const errorDiv = document.getElementById('error');
+      errorDiv.style.display = 'none';
+
+      recordsDiv.style.display = 'block';
+      listDiv.innerHTML = '<p>Loading...</p>';
+
+      try {
+        const response = await fetch(API_BASE + '/list');
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || data.error || 'Failed to load records');
+        }
+
+        const records = data.data || [];
+
+        if (records.length === 0) {
+          listDiv.innerHTML = '<p style="color: #999;">No records found.</p>';
+          return;
+        }
+
+        listDiv.innerHTML = records.map(r => `
+          <div class="record-item">
+            <strong>Roll:</strong> ${r.roll} | 
+            <strong>Name:</strong> ${r.name} | 
+            <strong>Marks:</strong> ${r.marks} | 
+            <strong>Attendance:</strong> ${r.attendance}%
+            <br>
+            <small style="color: #999;">Added: ${new Date(r.timestamp).toLocaleString()}</small>
+          </div>
+        `).join('');
+
+      } catch (error) {
+        listDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
